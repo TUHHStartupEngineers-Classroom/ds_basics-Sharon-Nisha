@@ -386,7 +386,7 @@ div.tocify {
 <p>This is an <code>.Rmd</code> file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header.</p>
 <div id="my-first-post" class="section level1" number="1">
 <h1 number="1"><span class="header-section-number">1</span> My first post</h1>
-<p>Last compiled: 2021-05-03</p>
+<p>Last compiled: 2021-05-04</p>
 <p>Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left.</p>
 <div id="second-level-header" class="section level2" number="1.1">
 <h2 number="1.1"><span class="header-section-number">1.1</span> Second level header</h2>
@@ -399,42 +399,31 @@ div.tocify {
 </div>
 <div id="my-second-post-note-the-order" class="section level1" number="2">
 <h1 number="2"><span class="header-section-number">2</span> My second post (note the order)</h1>
-<p>Last compiled: 2021-05-03</p>
-<p>I’m writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom</p>
-</div>
-<div id="adding-r-stuff" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> Adding R stuff</h1>
-<p>So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the same place.</p>
-<p>So, let’s say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:</p>
+<p>Last compiled: 2021-05-04 Question 1: Part a The task was to show sales at different locations</p>
 <pre class="r"><code> library(tidyverse)
 
-## Error: `by` must be supplied when `x` and `y` have no common variables.
-
-# If the data has no common column name, you can provide each column name in the &quot;by&quot; argument. For example, by = c(&quot;a&quot; = &quot;b&quot;) will match x.a to y.b. The order of the columns has to match the order of the tibbles).
 #concatenation
   bike_orderlines_joined_tbl &lt;- orderlines_tbl %&gt;%
         left_join (bikes_tbl, by = c(&quot;product.id&quot; = &quot;bike.id&quot;)) %&gt;%
         left_join (bikeshops_tbl, by = c(&quot;customer.id&quot; = &quot;bikeshop.id&quot;))
-# All actions are chained with the pipe already. You can perform each step separately and use glimpse() or View() to validate your code. Store the result in a variable at the end of the steps.
-bike_orderlines_wrangled_tbl &lt;- bike_orderlines_joined_tbl %&gt;%
+  
+  
+  
+# total price is calculated using quatity bought every day.A new column is created in this table
 
-  # 5.2 Add the total price (price * quantity) 
-  # Add a column to a tibble that uses a formula-style calculation of other columns
-  mutate(total.price = price * quantity) 
+sales_by_loc_tbl &lt;-bike_orderlines_wrangled_tbl%&gt;%
+
+  mutate(total.price = price * quantity) %&gt;%
 # 6.1 Sales by Year ----
 
-library(lubridate)
-# Step 1 - Manipulate
-sales_by_loc_tbl&lt;- bike_orderlines_wrangled_tbl %&gt;%
- 
   # Select columns
-  select(location, total.price) %&gt;% #we are taking state and price
+  select(location, total.price) %&gt;% 
+  #we are separating state and city 
   separate(col    = location,
            into   = c(&quot;city&quot;, &quot;state&quot;),
            sep    = &quot;,&quot;)%&gt;% 
-
-
- group_by(state) %&gt;% 
+  #states are grouped and total price for those states are shown (summing of costs according to states happen on their own)
+  group_by(state) %&gt;% 
   summarize(sales = sum(total.price)) %&gt;%
  
   # Optional: Add a column that turns the numbers into a currency format 
@@ -456,7 +445,7 @@ sales_by_loc_tbl&lt;- bike_orderlines_wrangled_tbl %&gt;%
   
   # Geometries
   geom_col(fill = &quot;#2DC6D6&quot;) + # Use geom_col for a bar plot
-  geom_label(aes(label = sales_text,size=70)) + # Adding labels to the bars
+  geom_label(aes(label = sales_text)) + # Adding labels to the bars
   geom_smooth(method = &quot;lm&quot;, se = FALSE) + # Adding a trendline
 
 
@@ -470,24 +459,6 @@ sales_by_loc_tbl&lt;- bike_orderlines_wrangled_tbl %&gt;%
       theme(axis.text.x = element_text(size=70,angle = 45, hjust = 1))+#added size of x text and angled
       theme(axis.text.y = element_text(size=70, hjust = 1))#added extra line for y text size incrementno need of angle</code></pre>
 <p><img src="01_tidyverse_files/figure-html/plot-1.png" width="4800" /></p>
-<pre class="r"><code>      theme(label.text = element_text(size=70, hjust = 1))#added extra line for y text size incrementno need of angle</code></pre>
-<pre><code>## List of 1
-##  $ label.text:List of 11
-##   ..$ family       : NULL
-##   ..$ face         : NULL
-##   ..$ colour       : NULL
-##   ..$ size         : num 70
-##   ..$ hjust        : num 1
-##   ..$ vjust        : NULL
-##   ..$ angle        : NULL
-##   ..$ lineheight   : NULL
-##   ..$ margin       : NULL
-##   ..$ debug        : NULL
-##   ..$ inherit.blank: logi FALSE
-##   ..- attr(*, &quot;class&quot;)= chr [1:2] &quot;element_text&quot; &quot;element&quot;
-##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;theme&quot; &quot;gg&quot;
-##  - attr(*, &quot;complete&quot;)= logi FALSE
-##  - attr(*, &quot;validate&quot;)= logi TRUE</code></pre>
 <pre class="r"><code>  labs(
     title    = &quot;Revenue by location&quot;,
     subtitle = &quot;&quot;,
@@ -508,6 +479,21 @@ sales_by_loc_tbl&lt;- bike_orderlines_wrangled_tbl %&gt;%
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;labels&quot;</code></pre>
+<p>Results:North Rhine-Westphalia has the highest sales</p>
+</div>
+<div id="adding-r-stuff" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> Adding R stuff</h1>
+<p>sales by location and year</p>
+<p>library(lubridate) # Step 1 - Manipulate sales_by_yearloc_nc &lt;-sales_by_year_loc_tbl %&gt;%</p>
+<p># Select columns select(order.date,location,total.price) %&gt;%</p>
+<p># Add year column mutate(year = year(order.date)) %&gt;%</p>
+<p># Grouping by year and summarizing sales group_by(location) ###################geometry sales_by_yearloc_nc %&gt;%</p>
+<p># Setup canvas with the columns year (x-axis) and sales (y-axis) ggplot(aes(x =year, y =total.price)) +</p>
+<p># Geometries geom_col(fill = “#2DC6D6”) + # Use geom_col for a bar plot geom_label(aes(label =location)) + # Adding labels to the bars geom_smooth(method = “lm”, se = FALSE) + # Adding a trendline</p>
+<p># Formatting # scale_y_continuous(labels = scales::dollar) + # Change the y-axis. # Again, we have to adjust it for euro values</p>
+<pre><code>  theme(axis.text.x = element_text(size=70,angle = 45, hjust = 1))+#added size of x text and angled
+  theme(axis.text.y = element_text(size=70, hjust = 1))#added extra line for y text size incrementno need of angle</code></pre>
+<p>labs( title = “Revenue by location and years”, subtitle = "“, x =”Year“, # Override defaults for x and y y =”Revenue" )</p>
 <p>When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You’ll learn that all of these things and more can be customized in each R code block.</p>
 </div>
 

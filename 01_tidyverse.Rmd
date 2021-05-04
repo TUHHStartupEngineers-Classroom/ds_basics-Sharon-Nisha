@@ -3,12 +3,15 @@ title: "01 Intro to the tidyverse"
 author: "Joschka Schwarz"
 date: "2021-04"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
   html_document:
-    toc: true
-    toc_float: true
+    toc: yes
+    toc_float: yes
     df_print: paged
-    collapsed: false
-    number_sections: true
+    collapsed: no
+    number_sections: yes
     toc_depth: 3
     code_folding: hide
 ---
@@ -17,9 +20,7 @@ output:
 knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 ```
 
-**IMPORTANT:** You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.
 
-This is an `.Rmd` file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a \# in front of your text, it will create a top level-header.
 
 # My first post
 
@@ -38,52 +39,43 @@ Here's an even lower level header
 # My second post (note the order)
 
 Last compiled: `r Sys.Date()`
-
-I'm writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom
-
-# Adding R stuff
-
-So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the same place. 
-
-So, let's say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:
-
-
-
+Question 1: Part a 
+The task was to show sales at different locations
+library(readxl)
+orderlines_tbl<- read_xlsx("C:/Users/sharo/OneDrive/Desktop/MasterSemester2/datasciencebasics/Rtasks_ds_basics-master/ds_basics-Sharon-Nisha/00_data/ds_data/ds_data/01_bike_sales/01_raw_data/orderlines.xlsx")
+bikes_tbl<- read_xlsx("C:/Users/sharo/OneDrive/Desktop/MasterSemester2/datasciencebasics/Rtasks_ds_basics-master/ds_basics-Sharon-Nisha/00_data/ds_data/ds_data/01_bike_sales/01_raw_data/bikes.xlsx")
+bikeshops_tbl<- read_xlsx("C:/Users/sharo/OneDrive/Desktop/MasterSemester2/datasciencebasics/Rtasks_ds_basics-master/ds_basics-Sharon-Nisha/00_data/ds_data/ds_data/01_bike_sales/01_raw_data/bikeshops.xlsx")
 ```{r plot, fig.width=50, fig.height=50}
- library(tidyverse)
 
-## Error: `by` must be supplied when `x` and `y` have no common variables.
+library(readxl)
+library(tidyverse)
+library(lubridate)
+# by automatically detecting a common column, if any ...
+bike_orderlines_joined_tbl <- orderlines_tbl %>%
+        left_join(bikes_tbl, by = c("product.id" = "bike.id")) %>%
+        left_join(bikeshops_tbl, by = c("customer.id" = "bikeshop.id"))
 
-# If the data has no common column name, you can provide each column name in the "by" argument. For example, by = c("a" = "b") will match x.a to y.b. The order of the columns has to match the order of the tibbles).
-#concatenation
-  bike_orderlines_joined_tbl <- orderlines_tbl %>%
-        left_join (bikes_tbl, by = c("product.id" = "bike.id")) %>%
-        left_join (bikeshops_tbl, by = c("customer.id" = "bikeshop.id"))
-# All actions are chained with the pipe already. You can perform each step separately and use glimpse() or View() to validate your code. Store the result in a variable at the end of the steps.
-bike_orderlines_wrangled_tbl <- bike_orderlines_joined_tbl %>%
+  
+  
+  
+# total price is calculated using quatity bought every day.A new column is created in this table
 
-  # 5.2 Add the total price (price * quantity) 
-  # Add a column to a tibble that uses a formula-style calculation of other columns
-  mutate(total.price = price * quantity) 
+sales_by_loc_tbl <-bike_orderlines_wrangled_tbl%>%
+
+  mutate(total.price = price * quantity) %>%
 # 6.1 Sales by Year ----
 
-library(lubridate)
-# Step 1 - Manipulate
-sales_by_loc_tbl<- bike_orderlines_wrangled_tbl %>%
- 
   # Select columns
-  select(location, total.price) %>% #we are taking state and price
+  select(location, total.price) %>% 
+  #we are separating state and city 
   separate(col    = location,
            into   = c("city", "state"),
            sep    = ",")%>% 
-
-
- group_by(state) %>% 
+  #states are grouped and total price for those states are shown (summing of costs according to states happen on their own)
+  group_by(state) %>% 
   summarize(sales = sum(total.price)) %>%
  
-  # Optional: Add a column that turns the numbers into a currency format 
-  # (makes it in the plot optically more appealing)
-  # mutate(sales_text = scales::dollar(sales)) <- Works for dollar values
+
   mutate(sales_text = scales::dollar(sales, big.mark = ".", 
                                      decimal.mark = ",", 
                                      prefix = "", 
@@ -95,7 +87,7 @@ sales_by_loc_tbl<- bike_orderlines_wrangled_tbl %>%
  
   sales_by_loc_tbl %>%
   
-  # Setup canvas with the columns year (x-axis) and sales (y-axis)
+
   ggplot(aes(x = state, y = sales)) +
   
   # Geometries
@@ -104,9 +96,7 @@ sales_by_loc_tbl<- bike_orderlines_wrangled_tbl %>%
   geom_smooth(method = "lm", se = FALSE) + # Adding a trendline
 
 
-  # Formatting
-  # scale_y_continuous(labels = scales::dollar) + # Change the y-axis. 
-  # Again, we have to adjust it for euro values
+
   scale_y_continuous(labels = scales::dollar_format(big.mark = ".", 
                                                     decimal.mark = ",", 
                                                     prefix = "", 
@@ -122,7 +112,111 @@ sales_by_loc_tbl<- bike_orderlines_wrangled_tbl %>%
     x = "", # Override defaults for x and y
     y = "Revenue"
   )
+```
+
+
+
+newxt exercise
+
+```{r plot, fig.width=50, fig.height=50}
+######this part is to be able to plot 2 parameters
+
+
+sales_by_yea_tbl <-bike_orderlines_wrangled_tbl%>% 
+
+  mutate(total.price = price * quantity) %>%
+# 6.1 Sales by Year ----
+  mutate(year=year(order.date))%>%
+  # Select columns
+  select(location,year,total.price)%>% 
+  group_by(location) 
+
+######################
+
+ hamburg_tbl <-sales_by_yea_tbl%>%
+    separate(col    = location,
+           into   = c("state", "city"),
+           sep    = ",")%>%
+  select(year, total.price, state)%>%
+ 
+ group_by(year,state)#####each year each state how much sales has now been grouped
+
+##############################
+  hamburg_tbl%>%
+  # Set up x, y, fill
+  ggplot(aes(x = year, y = total.price, fill = state)) +
+
+  # Geometries
+  geom_col() + # Run up to here to get a stacked bar plot
+
+  # Facet
+  facet_wrap(~ state) +
+
+  # Formatting
+  scale_y_continuous(labels = scales::dollar_format(big.mark = ".", 
+                                                    decimal.mark = ",", 
+                                                    prefix = "", 
+                                                    suffix = " €")) +
+  labs(
+    title = "Total sale per month based on state",
+    subtitle = "Each product category has an upward trend",
+    fill = "Main category" # Changes the legend name
+  )
 
 
 ```
+
+Results:North Rhine-Westphalia has the highest sales
+
+
+# Adding R stuff
+
+sales by location and year 
+
+
+library(lubridate)
+# Step 1 - Manipulate
+sales_by_yearloc_nc <-sales_by_year_loc_tbl %>%
+ 
+  # Select columns
+  select(order.date,location,total.price) %>%
+
+  # Add year column
+  mutate(year = year(order.date)) %>%
+ 
+  # Grouping by year and summarizing sales
+  group_by(location) 
+###################geometry
+sales_by_yearloc_nc %>%
+  
+  # Setup canvas with the columns year (x-axis) and sales (y-axis)
+  ggplot(aes(x =year, y =total.price)) +
+  
+  # Geometries
+  geom_col(fill = "#2DC6D6") + # Use geom_col for a bar plot
+  geom_label(aes(label =location)) + # Adding labels to the bars
+  geom_smooth(method = "lm", se = FALSE) + # Adding a trendline
+
+
+  # Formatting
+  # scale_y_continuous(labels = scales::dollar) + # Change the y-axis. 
+  # Again, we have to adjust it for euro values
+
+      theme(axis.text.x = element_text(size=70,angle = 45, hjust = 1))+#added size of x text and angled
+      theme(axis.text.y = element_text(size=70, hjust = 1))#added extra line for y text size incrementno need of angle
+  
+
+  
+  labs(
+    title    = "Revenue by location and years",
+    subtitle = "",
+    x = "Year", # Override defaults for x and y
+    y = "Revenue"
+  )
+
+
+
+
+
+
 When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You'll learn that all of these things and more can be customized in each R code block.

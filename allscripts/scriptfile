@@ -6,9 +6,7 @@
 library(tidyverse)
 library(readxl)
 # 2.0 Importing Files ----
-orderlines_tbl<- read_xlsx("C:/Users/sharo/OneDrive/Desktop/MasterSemester2/datasciencebasics/Rtasks_ds_basics-master/ds_basics-Sharon-Nisha/00_data/ds_data/ds_data/01_bike_sales/01_raw_data/orderlines.xlsx")
-bikes_tbl<- read_xlsx("C:/Users/sharo/OneDrive/Desktop/MasterSemester2/datasciencebasics/Rtasks_ds_basics-master/ds_basics-Sharon-Nisha/00_data/ds_data/ds_data/01_bike_sales/01_raw_data/bikes.xlsx")
-bikeshops_tbl<- read_xlsx("C:/Users/sharo/OneDrive/Desktop/MasterSemester2/datasciencebasics/Rtasks_ds_basics-master/ds_basics-Sharon-Nisha/00_data/ds_data/ds_data/01_bike_sales/01_raw_data/bikes.xlsx")
+
 
 # 3.0 Examining Data ----
 View(bikes_tbl)
