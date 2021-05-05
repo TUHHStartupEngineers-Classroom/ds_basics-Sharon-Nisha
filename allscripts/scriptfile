@@ -1,50 +1,62 @@
-# Data Science at TUHH ------------------------------------------------------
-# SALES ANALYSIS ----
+library(httr)
+resp <- GET("https://swapi.dev/api/people/1/")
 
-# 1.0 Load libraries ----
+# Wrapped into a function
+sw_api <- function(path) {
+  url <- modify_url(url = "https://swapi.dev", path = glue("/api{path}"))
+  resp <- GET(url)
+  stop_for_status(resp) # automatically throws an error if a request did not succeed
+}
 
-library(tidyverse)
-library(readxl)
-# 2.0 Importing Files ----
-
-
-# 3.0 Examining Data ----
-View(bikes_tbl)
-View(orderlines_tbl)
-
-# 4.0 Joining Data ----
-left_join(orderlines_tbl, bikes_tbl, by = c("product.id" = "bike.id"))
-# 5.0 Wrangling Data ----
-bike_orderlines_joined_tbl %>% 
-  select(category) %>%
-  filter(str_detect(category, "^Mountain")) %>% 
-  unique()
-  
-# Chaining commands with the pipe and assigning it to order_items_joined_tbl
-bike_orderlines_joined_tbl <- orderlines_tbl %>%
-        left_join(bikes_tbl, by = c("product.id" = "bike.id")) %>%
-        left_join(bikeshops_tbl, by = c("customer.id" = "bikeshop.id"))
-
-# 6.0 Business Insights ----
-# 6.1 Sales by Year ----
-
-# Step 1 - Manipulate
-
-# Step 2 - Visualize
+resp <- sw_api("/people/1")
+resp
 
 
-# 6.2 Sales by Year and Category 2 ----
-
-# Step 1 - Manipulate
-
-# Step 2 - Visualize
+###reading response
+rawToChar(resp$content)
+## "{\"name\":\"Luke Skywalker\",\"height\":\"172\",\"mass\":\"77\",
+## \"hair_color\":\"blond\",\"skin_color\":\"fair\",\"eye_color\":
+## \"blue\",\"birth_year\":\"19BBY\",\"gender\":\"male\",\"homeworld\":
+## \"http://swapi.dev/api/planets/1/\",\"films\":
+## [\"http://swapi.dev/api/films/1/\",\"http://swapi.dev/api/films/2/\",
+## \"http://swapi.dev/api/films/3/\",\"http://swapi.dev/api/films/6/\"],
+## \"species\":[],\"vehicles\":[\"http://swapi.dev/api/vehicles/14/\",
+## \"http://swapi.dev/api/vehicles/30/\"],\"starships\":
+## [\"http://swapi.dev/api/starships/12/\",\"http://swapi.dev/api/
+## starships/22/\"],\"created\":\"2014-12-09T13:50:
+## 51.644000Z\",\"edited\":\"2014-12-20T21:17:56.891000Z\",\"url\":
+## \"http://swapi.dev/api/people/1/\"}"
 
 
 
-# 7.0 Writing Files ----
+###cleaning response
+library(jsonlite)
+resp %>% 
+    .$content %>% 
+    rawToChar() %>% 
+    fromJSON()
+    
+    
+    
+#####opening a particular token
+token    <- "my_individual_token"
+response <- GET(glue("https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=WDI.DE&apikey={token}"))
+response
 
-# 7.1 Excel ----
 
-# 7.2 CSV ----
+#####save credentials in .renviron file 
 
-# 7.3 RDS ----
+####use those so thatt noone else sees them inn the link
+alphavantage_api_url <- "https://www.alphavantage.co/query"
+ticker               <- "WDI.DE"
+# You can pass all query parameters as a list to the query argument of GET()
+GET(alphavantage_api_url, query = list('function' = "GLOBAL_QUOTE",
+                                       symbol     = ticker,
+                                       apikey     = Sys.getenv('TOKEN'))
+    )
+    
+    
+#####html link
+https://developer.mozilla.org/en-US/docs/Web/HTML/Element
+#####css link
+https://www.w3.org/Style/CSS/Overview.en.html

@@ -74,8 +74,6 @@ sales_by_loc_tbl <-bike_orderlines_wrangled_tbl%>%
   #states are grouped and total price for those states are shown (summing of costs according to states happen on their own)
   group_by(state) %>% 
   summarize(sales = sum(total.price)) %>%
- 
-
   mutate(sales_text = scales::dollar(sales, big.mark = ".", 
                                      decimal.mark = ",", 
                                      prefix = "", 
@@ -101,8 +99,8 @@ sales_by_loc_tbl <-bike_orderlines_wrangled_tbl%>%
                                                     decimal.mark = ",", 
                                                     prefix = "", 
                                                     suffix = " €"))+
-      theme(axis.text.x = element_text(size=70,angle = 45, hjust = 1))+#added size of x text and angled
-      theme(axis.text.y = element_text(size=70, hjust = 1))#added extra line for y text size incrementno need of angle
+  theme(axis.text.x = element_text(size=70,angle = 45, hjust = 1))+#added size of x text and angled
+  theme(axis.text.y = element_text(size=70, hjust = 1))#added extra line for y text size incrementno need of angle
   
 
   
@@ -169,54 +167,3 @@ sales_by_yea_tbl <-bike_orderlines_wrangled_tbl%>%
 Results:North Rhine-Westphalia has the highest sales
 
 
-# Adding R stuff
-
-sales by location and year 
-
-
-library(lubridate)
-# Step 1 - Manipulate
-sales_by_yearloc_nc <-sales_by_year_loc_tbl %>%
- 
-  # Select columns
-  select(order.date,location,total.price) %>%
-
-  # Add year column
-  mutate(year = year(order.date)) %>%
- 
-  # Grouping by year and summarizing sales
-  group_by(location) 
-###################geometry
-sales_by_yearloc_nc %>%
-  
-  # Setup canvas with the columns year (x-axis) and sales (y-axis)
-  ggplot(aes(x =year, y =total.price)) +
-  
-  # Geometries
-  geom_col(fill = "#2DC6D6") + # Use geom_col for a bar plot
-  geom_label(aes(label =location)) + # Adding labels to the bars
-  geom_smooth(method = "lm", se = FALSE) + # Adding a trendline
-
-
-  # Formatting
-  # scale_y_continuous(labels = scales::dollar) + # Change the y-axis. 
-  # Again, we have to adjust it for euro values
-
-      theme(axis.text.x = element_text(size=70,angle = 45, hjust = 1))+#added size of x text and angled
-      theme(axis.text.y = element_text(size=70, hjust = 1))#added extra line for y text size incrementno need of angle
-  
-
-  
-  labs(
-    title    = "Revenue by location and years",
-    subtitle = "",
-    x = "Year", # Override defaults for x and y
-    y = "Revenue"
-  )
-
-
-
-
-
-
-When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You'll learn that all of these things and more can be customized in each R code block.
