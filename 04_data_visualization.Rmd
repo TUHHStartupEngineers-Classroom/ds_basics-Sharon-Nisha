@@ -47,8 +47,37 @@ So far this is just a blog where you can write in plain text and serve your writ
 So, let's say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:
 
 ```{r}
-samples <- rnorm(100, mean=0, sd=1)
-hist(samples)
+library(tidyverse)
+covid_data_tbl <- read_csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
+covid_data_reduced_tbl<- covid_data_tbl%>%select(continent,total_cases,date)%>%
+group_by(continent,date)#####each year each state how much sales has now been grouped
+####
+##plot different continents cases over time on the same graph in different colours
+##############################
+colors()
+covid_data_reduced_tbl%>%
+
+  # Set up x, y, fill
+  ggplot(aes( x=date, y=total_cases) )+
+
+    
+    geom_line(size = 0.1) +
+    geom_smooth(method = "loess", span = 0.2)+
+  # Geometries
+  geom_lin() + # Run up to here to get a stacked bar plot
+
+  
+  # Formatting
+  scale_y_continuous(labels = scales::dollar_format(big.mark = ".", 
+                                                    decimal.mark = ",", 
+                                                    prefix = "", 
+                                                    suffix = " €")) +
+  labs(
+    title = "Total sale per month based on state",
+    subtitle = "Each product category has an upward trend",
+    fill = "Main category" # Changes the legend name
+  )
+
 ```
 
 When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You'll learn that all of these things and more can be customized in each R code block.
