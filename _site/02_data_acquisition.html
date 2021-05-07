@@ -380,34 +380,43 @@ div.tocify {
 </div>
 
 
-<p><strong>IMPORTANT:</strong> You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.</p>
-<p>This is an <code>.Rmd</code> file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header.</p>
-<div id="my-first-post" class="section level1" number="1">
-<h1 number="1"><span class="header-section-number">1</span> My first post</h1>
-<p>Last compiled: 2021-05-04</p>
-<p>Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left.</p>
-<div id="second-level-header" class="section level2" number="1.1">
-<h2 number="1.1"><span class="header-section-number">1.1</span> Second level header</h2>
-<p>You can add more headers by adding more hashtags. These won’t be put into the table of contents</p>
-<div id="third-level-header" class="section level3" number="1.1.1">
-<h3 number="1.1.1"><span class="header-section-number">1.1.1</span> third level header</h3>
-<p>Here’s an even lower level header</p>
+<div id="bike-types-and-prices" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> Bike types and prices</h1>
+<p>The following table shows the bikenames and prices</p>
+<pre class="r"><code>library(jsonlite)
+library(tidyverse)
+library(xml2)
+library(httr)
+library(rvest)  
+url  &lt;- &quot;https://www.radon-bikes.de/e-bike/mountainbike/bikegrid/&quot;
+html &lt;- url %&gt;% 
+  read_html()
+rank &lt;-  html %&gt;% 
+  html_nodes(css = &quot;.small-12 .a-heading--small&quot;)%&gt;% 
+  html_text()
+  rank_non&lt;-stringr::str_replace(rank, &quot;\n&quot;, &quot;&quot;)  %&gt;%   #remove /n
+  discard(.p = ~stringr::str_detect(.x,&quot;Welcome to our Radon-Bikes Instagram!|#radonbikes #bisbaldimwald&quot;))
+  rank_non2&lt;-stringr::str_extract(rank_non,&quot;(?&lt;= ).*(?=\n)&quot;)
+
+  ##price of each bike type 
+  bikeprice&lt;-  html %&gt;% 
+    html_nodes(css = &quot;.small-12 .currency_eur .m-bikegrid__price--active&quot;) %&gt;% 
+    html_text()
+  
+  rank_non3&lt;-stringr::str_extract(bikeprice,&quot;[0-9]+&quot;)%&gt;%
+  as.numeric()
+  
+  #vector to table 
+  
+
+#fill the names to a table m-bikegrid__price--active
+  imdtbl &lt;- tibble(Bike_names=rank_non2,Bike_price=rank_non3)
+  imdtbl</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Bike_names"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Bike_price"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"RENDER 8.0","2":"4249"},{"1":"RENDER 9.0","2":"5049"},{"1":"RENDER 10.0","2":"5849"},{"1":"RENDER 10.0 HD SUPREME","2":"6849"},{"1":"JEALOUS AL HYBRID 8.0","2":"2749"},{"1":"JEALOUS AL HYBRID 9.0","2":"3049"},{"1":"ZR TEAM HYBRID 6.0 CX 500","2":"2029"},{"1":"ZR TEAM HYBRID 8.0 CX 500","2":"2329"},{"1":"ZR TEAM HYBRID 9.0 CX 500","2":"2529"},{"1":"ZR TEAM HYBRID PERFORMANCE 7.0 500","2":"2029"},{"1":"ZR TEAM HYBRID PERFORMANCE 8.0 500","2":"2249"},{"1":"ZR LADY HYBRID CX 500","2":"2229"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 </div>
-</div>
-</div>
-<div id="my-second-post-note-the-order" class="section level1" number="2">
-<h1 number="2"><span class="header-section-number">2</span> My second post (note the order)</h1>
-<p>Last compiled: 2021-05-04</p>
-<p>I’m writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom</p>
-</div>
-<div id="adding-r-stuff" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> Adding R stuff</h1>
-<p>So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the same place.</p>
-<p>So, let’s say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:</p>
-<pre class="r"><code>samples &lt;- rnorm(100, mean=0, sd=1)
-hist(samples)</code></pre>
-<p><img src="02_data_acquisition_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-<p>When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You’ll learn that all of these things and more can be customized in each R code block.</p>
 </div>
 
 
