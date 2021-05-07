@@ -17,11 +17,36 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 ```
 
 
-# Bike types and prices
+
+# Employee list 
 
 
 
+The following table shows employee details 
+```{r}
+library(jsonlite)
+library(tidyverse)
+library(xml2)
+library(httr)
+library(rvest)  
+library(httr)
+library(purrr)
+
+
+resp <- GET("https://dummy.restapiexample.com/api/v1/employees")
+library(jsonlite)
+resp %>% 
+    .$content %>% 
+    rawToChar() %>% 
+    fromJSON()
+resp
+
+
+```
+# Bike types and prices 
 The following table shows the bikenames and prices 
+
+
 
 ```{r}
 library(jsonlite)
