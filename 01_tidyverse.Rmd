@@ -56,7 +56,8 @@ bike_orderlines_wrangled_tbl <- copy_bike_orderlines_joined_tbl %>%
   separate(col    = location,
            into   = c("city", "state"),
            sep    = ",") %>%
-
+#didnot want to convert dots to dashes for simplicity
+                    #set_names(names(.) %>% str_replace_all("\\.", "_"))
   # 5.2 Add the total price (price * quantity) 
   # Add a column to a tibble that uses a formula-style calculation of other columns
   mutate(total.price = price * quantity)
