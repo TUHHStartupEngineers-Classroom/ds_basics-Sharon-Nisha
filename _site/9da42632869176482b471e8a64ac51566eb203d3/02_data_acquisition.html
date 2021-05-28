@@ -13,13 +13,22 @@
 
 <title>02 Data Acqusition</title>
 
-<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
@@ -40,11 +49,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -57,32 +61,6 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
 
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -94,10 +72,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -114,40 +88,13 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -175,7 +122,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -187,7 +134,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -198,10 +145,23 @@ $(document).ready(function () {
   var menuAnchor = $('a[href="' + href + '"]');
 
   // mark it active
-  menuAnchor.parent().addClass('active');
+  menuAnchor.tab('show');
 
   // if it's got a parent navbar menu mark it active as well
   menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -213,7 +173,6 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -342,7 +301,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -403,11 +362,11 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
-<div class="btn-group pull-right">
-<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
-<ul class="dropdown-menu" style="min-width: 50px;">
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
 <li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
 <li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
 </ul>
@@ -421,34 +380,100 @@ div.tocify {
 </div>
 
 
-<p><strong>IMPORTANT:</strong> You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.</p>
-<p>This is an <code>.Rmd</code> file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header.</p>
-<div id="my-first-post" class="section level1" number="1">
-<h1 number="1"><span class="header-section-number">1</span> My first post</h1>
-<p>Last compiled: 2021-04-16</p>
-<p>Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left.</p>
-<div id="second-level-header" class="section level2" number="1.1">
-<h2 number="1.1"><span class="header-section-number">1.1</span> Second level header</h2>
-<p>You can add more headers by adding more hashtags. These won’t be put into the table of contents</p>
-<div id="third-level-header" class="section level3" number="1.1.1">
-<h3 number="1.1.1"><span class="header-section-number">1.1.1</span> third level header</h3>
-<p>Here’s an even lower level header</p>
+<div id="employee-list" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> Employee list</h1>
+<p>The following table shows employee details</p>
+<pre class="r"><code>library(jsonlite)
+library(tidyverse)
+library(xml2)
+library(httr)
+library(rvest)  
+library(httr)
+library(purrr)
+
+
+resp &lt;- GET(&quot;https://dummy.restapiexample.com/api/v1/employees&quot;)
+library(jsonlite)
+resp %&gt;% 
+    .$content %&gt;% 
+    rawToChar() %&gt;% 
+    fromJSON()</code></pre>
+<pre><code>## $status
+## [1] &quot;success&quot;
+## 
+## $data
+##    id       employee_name employee_salary employee_age profile_image
+## 1   1         Tiger Nixon          320800           61              
+## 2   2     Garrett Winters          170750           63              
+## 3   3          Ashton Cox           86000           66              
+## 4   4        Cedric Kelly          433060           22              
+## 5   5          Airi Satou          162700           33              
+## 6   6  Brielle Williamson          372000           61              
+## 7   7     Herrod Chandler          137500           59              
+## 8   8      Rhona Davidson          327900           55              
+## 9   9       Colleen Hurst          205500           39              
+## 10 10         Sonya Frost          103600           23              
+## 11 11         Jena Gaines           90560           30              
+## 12 12         Quinn Flynn          342000           22              
+## 13 13     Charde Marshall          470600           36              
+## 14 14       Haley Kennedy          313500           43              
+## 15 15 Tatyana Fitzpatrick          385750           19              
+## 16 16       Michael Silva          198500           66              
+## 17 17           Paul Byrd          725000           64              
+## 18 18       Gloria Little          237500           59              
+## 19 19       Bradley Greer          132000           41              
+## 20 20            Dai Rios          217500           35              
+## 21 21    Jenette Caldwell          345000           30              
+## 22 22          Yuri Berry          675000           40              
+## 23 23        Caesar Vance          106450           21              
+## 24 24        Doris Wilder           85600           23              
+## 
+## $message
+## [1] &quot;Successfully! All records has been fetched.&quot;</code></pre>
+<pre class="r"><code>resp</code></pre>
+<pre><code>## Response [https://dummy.restapiexample.com/api/v1/employees]
+##   Date: 2021-05-28 10:56
+##   Status: 200
+##   Content-Type: application/json
+##   Size: 2.56 kB</code></pre>
 </div>
+<div id="bike-types-and-prices" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> Bike types and prices</h1>
+<p>The following table shows the bikenames and prices</p>
+<pre class="r"><code>library(jsonlite)
+library(tidyverse)
+library(xml2)
+library(httr)
+library(rvest)  
+url  &lt;- &quot;https://www.radon-bikes.de/e-bike/mountainbike/bikegrid/&quot;
+html &lt;- url %&gt;% 
+  read_html()
+rank &lt;-  html %&gt;% 
+  html_nodes(css = &quot;.small-12 .a-heading--small&quot;)%&gt;% 
+  html_text()
+  rank_non&lt;-stringr::str_replace(rank, &quot;\n&quot;, &quot;&quot;)  %&gt;%   #remove /n
+  discard(.p = ~stringr::str_detect(.x,&quot;Welcome to our Radon-Bikes Instagram!|#radonbikes #bisbaldimwald&quot;))
+  rank_non2&lt;-stringr::str_extract(rank_non,&quot;(?&lt;= ).*(?=\n)&quot;)
+
+  ##price of each bike type 
+  bikeprice&lt;-  html %&gt;% 
+    html_nodes(css = &quot;.small-12 .currency_eur .m-bikegrid__price--active&quot;) %&gt;% 
+    html_text()
+  
+  rank_non3&lt;-stringr::str_extract(bikeprice,&quot;[0-9]+&quot;)%&gt;%
+  as.numeric()
+  
+  #vector to table 
+  
+
+#fill the names to a table m-bikegrid__price--active
+  imdtbl &lt;- tibble(Bike_names=rank_non2,Bike_price=rank_non3)
+  imdtbl</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Bike_names"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Bike_price"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"RENDER 8.0","2":"4249"},{"1":"RENDER 9.0","2":"5049"},{"1":"RENDER 10.0","2":"5849"},{"1":"RENDER 10.0 HD SUPREME","2":"6849"},{"1":"JEALOUS AL HYBRID 8.0","2":"2799"},{"1":"JEALOUS AL HYBRID 9.0","2":"3099"},{"1":"ZR TEAM HYBRID 6.0 CX 500","2":"2099"},{"1":"ZR TEAM HYBRID 8.0 CX 500","2":"2329"},{"1":"ZR TEAM HYBRID 9.0 CX 500","2":"2529"},{"1":"ZR TEAM HYBRID PERFORMANCE 7.0 500","2":"2029"},{"1":"ZR TEAM HYBRID PERFORMANCE 8.0 500","2":"2249"},{"1":"ZR LADY HYBRID CX 500","2":"2229"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 </div>
-</div>
-<div id="my-second-post-note-the-order" class="section level1" number="2">
-<h1 number="2"><span class="header-section-number">2</span> My second post (note the order)</h1>
-<p>Last compiled: 2021-04-16</p>
-<p>I’m writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom</p>
-</div>
-<div id="adding-r-stuff" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> Adding R stuff</h1>
-<p>So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the same place.</p>
-<p>So, let’s say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:</p>
-<pre class="r"><code>samples &lt;- rnorm(100, mean=0, sd=1)
-hist(samples)</code></pre>
-<p><img src="02_data_acquisition_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-<p>When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You’ll learn that all of these things and more can be customized in each R code block.</p>
 </div>
 
 
@@ -480,7 +505,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>

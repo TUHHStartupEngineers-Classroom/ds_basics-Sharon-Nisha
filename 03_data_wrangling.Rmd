@@ -52,20 +52,20 @@ col_types <- list(
 )
 
 patent_tbl <- vroom(
-            file       = "C:/Users/sharo/OneDrive/Desktop/MasterSemester2/datasciencebasics/Patent_data_reduced/Patent_data_reduced/patent.tsv", 
+            file       = "C:/Users/ctaru/Desktop/businessdatascience/Patent_data_reduced/patent.tsv", 
             delim      = "\t", 
             col_types  = col_types,
             na         = c("", "NA", "NULL")
         )
 
 assignee_tbl <- vroom(
-            file       = "C:/Users/sharo/OneDrive/Desktop/MasterSemester2/datasciencebasics/Patent_data_reduced/Patent_data_reduced/assignee.tsv", 
+            file       = "C:/Users/ctaru/Desktop/businessdatascience/Patent_data_reduced/assignee.tsv", 
             delim      = "\t", 
             col_types  = col_types,
             na         = c("", "NA", "NULL")
         )
 patent_assignee <- vroom(
-            file       = "C:/Users/sharo/OneDrive/Desktop/MasterSemester2/datasciencebasics/Patent_data_reduced/Patent_data_reduced/patent_assignee.tsv", 
+            file       = "C:/Users/ctaru/Desktop/businessdatascience/Patent_data_reduced/patent_assignee.tsv", 
             delim      = "\t", 
             col_types  = col_types,
             na         = c("", "NA", "NULL")
@@ -131,20 +131,20 @@ col_types <- list(
 )
 
 patent_tbl <- vroom(
-            file       = "C:/Users/sharo/OneDrive/Desktop/MasterSemester2/datasciencebasics/Patent_data_reduced/Patent_data_reduced/patent.tsv", 
+            file       = "C:/Users/ctaru/Desktop/businessdatascience/Patent_data_reduced/patent.tsv", 
             delim      = "\t", 
             col_types  = col_types,
             na         = c("", "NA", "NULL")
         )
 
 assignee_tbl <- vroom(
-            file       = "C:/Users/sharo/OneDrive/Desktop/MasterSemester2/datasciencebasics/Patent_data_reduced/Patent_data_reduced/assignee.tsv", 
+            file       = "C:/Users/ctaru/Desktop/businessdatascience/Patent_data_reduced/assignee.tsv", 
             delim      = "\t", 
             col_types  = col_types,
             na         = c("", "NA", "NULL")
         )
 patent_assignee <- vroom(
-            file       = "C:/Users/sharo/OneDrive/Desktop/MasterSemester2/datasciencebasics/Patent_data_reduced/Patent_data_reduced/patent_assignee.tsv", 
+            file       = "C:/Users/ctaru/Desktop/businessdatascience/Patent_data_reduced/patent_assignee.tsv", 
             delim      = "\t", 
             col_types  = col_types,
             na         = c("", "NA", "NULL")
