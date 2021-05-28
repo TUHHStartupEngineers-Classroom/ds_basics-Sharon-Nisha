@@ -18,66 +18,155 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 
 **IMPORTANT:** You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.
 
-This is an `.Rmd` file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a \# in front of your text, it will create a top level-header.
+
 
 # My first post
 
 Last compiled: `r Sys.Date()`
+Plotting covid data
 
-Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left. 
 
-## Second level header
 
-You can add more headers by adding more hashtags. These won't be put into the table of contents
 
-### third level header
 
-Here's an even lower level header
+```{r}
 
-# My second post (note the order)
-
-Last compiled: `r Sys.Date()`
-
-I'm writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom
-
-# Adding R stuff
-
-So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the same place. 
-
-So, let's say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:
-
-{r}
 library(tidyverse)
 covid_data_tbl <- read_csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
-covid_data_reduced_tbl<- covid_data_tbl%>%select(continent,total_cases,date)%>%
-group_by(continent,date)#####each year each state how much sales has now been grouped
-####
-##plot different continents cases over time on the same graph in different colours
-##############################
-colors()
-covid_data_reduced_tbl%>%
+new_cov_table<-covid_data_tbl%>%select(continent,date,total_cases)%>%  group_by(continent,date) %>% summarize(total.cases = sum(total_cases)) %>%
+    ungroup()
 
-  # Set up x, y, fill
-  ggplot(aes( x=date, y=total_cases) )+
 
+new_cov_table %>% group_by(continent,date)%>% 
     
-    geom_line(size = 0.1) +
-    geom_smooth(method = "loess", span = 0.2)+
-  # Geometries
-  geom_lin() + # Run up to here to get a stacked bar plot
-
+    ggplot(aes(date,total.cases, fill = continent,color =continent)) +
+    
+    geom_line(size = 0.5, linetype = 1) +
+    # facet_wrap(~ frame_material, ncol = 1) +
   
-  # Formatting
-  scale_y_continuous(labels = scales::dollar_format(big.mark = ".", 
-                                                    decimal.mark = ",", 
-                                                    prefix = "", 
-                                                    suffix = " €")) +
+    theme(legend.position = "bottom")+geom_smooth(method = "loess", span = 0.2)+
   labs(
-    title = "Total sale per month based on state",
-    subtitle = "Each product category has an upward trend",
-    fill = "Main category" # Changes the legend name
-  )
+        title = "Covid cases in the 7 continents",
+   
+        fill = "continent" ,  
+        x = "Date",
+        y = "Total cases"
+
+    )
+
+```
 
 
 
-When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You'll learn that all of these things and more can be customized in each R code block.
+library(tidyverse) # loads ggplot2
+library(lubridate)
+
+bike_orderlines_tbl <- read_excel("C:/Users/ctaru/Desktop/businessdatascience/ds_data/ds_data/01_bike_sales/01_raw_data/orderlines.xlsx")
+
+# 1.0 Anatomy of a ggplot ----
+
+# 1.1 How ggplot works ----
+
+# Step 1: Format data ----
+bike_orderlines_wrangled_tbl %>%
+    
+    distinct(price, model, frame.material) %>%
+    
+    ggplot(aes(price, fill = frame.material)) +
+    
+    geom_density() +
+    # facet_wrap(~ frame_material, ncol = 1) +
+  
+    theme(legend.position = "bottom")
+
+sales_by_year_tbl <- bike_orderlines_wrangled_tbl %>%
+
+  # Selecting columns to focus on and adding a year column
+  select(order.date, total.price) %>%
+  mutate(year = year(order.date)) %>%
+
+  # Grouping by year, and summarizing sales
+  group_by(year) %>%
+  summarize(sales = sum(total.price)) %>%
+  ungroup() %>%
+
+  # € Format Text
+  mutate(sales_text = scales::dollar(sales, 
+                                     big.mark     = ".", 
+                                     decimal.mark = ",", 
+                                     prefix       = "", 
+                                     suffix       = " €"))
+sales_by_year_tbl %>%
+
+  # Canvas
+  ggplot(aes(x = year, y = sales, color = sales)) +
+
+  # Geometries 
+  geom_line(size = 1) +
+  geom_point(size = 5) +
+  geom_smooth(method = "lm", se = FALSE)
+revenue_by_month_tbl <- bike_orderlines_wrangled_tbl %>%
+    
+    select(order.date, total.price) %>%
+    
+    mutate(year_month = floor_date(order.date, "months") %>% ymd()) %>%
+    
+    group_by(year_month) %>%
+    summarize(revenue = sum(total.price)) %>%
+    ungroup()
+revenue_by_month_tbl %>%
+    
+    ggplot(aes(year_month, revenue)) +
+    
+    geom_line(size = 0.5, linetype = 1)+ 
+    geom_smooth(method = "loess", span = 0.2)
+
+
+revenue_by_category_tbl <- bike_orderlines_wrangled_tbl %>%
+    
+    select(category, total.price) %>%
+    
+    group_by(category) %>%
+    summarize(revenue = sum(total.price)) %>%
+    ungroup()
+
+# Bar Plot
+
+library(tidyverse)
+library(readxl)
+
+library(lubridate)
+n <- 10
+# Data Manipulation
+top_customers_tbl <- bike_orderlines_wrangled_tbl %>%
+    
+    # Select relevant columns
+    select(name, total.price)%>%
+    
+    # Collapse the least frequent values into “other”
+    mutate(bikeshop = as_factor(name) %>% fct_lump(n = n, w = total.price)) %>%  # Group and summarize
+    group_by(name) %>%
+    summarize(revenue = sum(total.price)) %>%
+    ungroup() %>%
+    
+    # Reorder the column customer_city by revenue
+    mutate(bikeshop = name %>% fct_reorder(revenue))%>%
+    # Place "Other" at the beginning
+    mutate(bikeshop = bikeshop %>% fct_relevel("Other", after = 0))%>%
+        arrange(desc(bikeshop)) %>%
+    
+    # Add Revenue Text
+    mutate(revenue_text = scales::dollar(revenue, 
+                                         scale  = 1e-6, 
+                                         prefix = "", 
+                                         suffix = "M €"))
+
+
+revenue_by_category_tbl %>%
+    
+    mutate(category_2 = category %>% as_factor() %>% fct_reorder(revenue)) %>%
+    
+    ggplot(aes(category_2, revenue)) +
+    
+    geom_col(fill = "#2c3e50") + 
+    coord_flip()

@@ -73,10 +73,11 @@ sales_by_loc_tbl <-bike_orderlines_wrangled_tbl%>%
   select(state, total.price) %>% 
   group_by(state) %>% 
   summarize(sales = sum(total.price)) %>%
-  mutate(sales_text = scales::dollar(sales, big.mark = ".", 
+  mutate(sales_text = scales::dollar(sales, 
+                                     big.mark     = ".", 
                                      decimal.mark = ",", 
-                                     prefix = "", 
-                                     suffix = " €"))
+                                     prefix       = "", 
+                                     suffix       = " €"))
 
 intermediate_table<-bike_orderlines_wrangled_tbl
 
