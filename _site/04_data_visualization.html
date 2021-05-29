@@ -381,9 +381,9 @@ div.tocify {
 
 
 <p><strong>IMPORTANT:</strong> You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.</p>
-<div id="my-first-post" class="section level1" number="1">
-<h1 number="1"><span class="header-section-number">1</span> My first post</h1>
-<p>Last compiled: 2021-05-29 Plotting covid data</p>
+<div id="exercise-4-part-1" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> Exercise 4 part 1</h1>
+<p>Last compiled: 2021-05-30 Plotting covid data</p>
 <pre class="r"><code>library(tidyverse)
 covid_data_tbl &lt;- read_csv(&quot;https://covid.ourworldindata.org/data/owid-covid-data.csv&quot;)
 new_cov_table&lt;-covid_data_tbl%&gt;%select(continent,date,total_cases)%&gt;%  group_by(continent,date) %&gt;% summarize(total.cases = sum(total_cases)) %&gt;%
@@ -407,82 +407,6 @@ new_cov_table %&gt;% group_by(continent,date)%&gt;%
 
     )</code></pre>
 <p><img src="04_data_visualization_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-<p>library(tidyverse) # loads ggplot2 library(lubridate)</p>
-<p>bike_orderlines_tbl &lt;- read_excel(“C:/Users/ctaru/Desktop/businessdatascience/ds_data/ds_data/01_bike_sales/01_raw_data/orderlines.xlsx”)</p>
-</div>
-<div id="anatomy-of-a-ggplot--" class="section level1" number="2">
-<h1 number="2"><span class="header-section-number">2</span> 1.0 Anatomy of a ggplot —-</h1>
-</div>
-<div id="how-ggplot-works--" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> 1.1 How ggplot works —-</h1>
-</div>
-<div id="step-1-format-data--" class="section level1" number="4">
-<h1 number="4"><span class="header-section-number">4</span> Step 1: Format data —-</h1>
-<p>bike_orderlines_wrangled_tbl %&gt;%</p>
-<pre><code>distinct(price, model, frame.material) %&gt;%
-
-ggplot(aes(price, fill = frame.material)) +
-
-geom_density() +
-# facet_wrap(~ frame_material, ncol = 1) +
-
-theme(legend.position = &quot;bottom&quot;)</code></pre>
-<p>sales_by_year_tbl &lt;- bike_orderlines_wrangled_tbl %&gt;%</p>
-<p># Selecting columns to focus on and adding a year column select(order.date, total.price) %&gt;% mutate(year = year(order.date)) %&gt;%</p>
-<p># Grouping by year, and summarizing sales group_by(year) %&gt;% summarize(sales = sum(total.price)) %&gt;% ungroup() %&gt;%</p>
-<p># € Format Text mutate(sales_text = scales::dollar(sales, big.mark = “.”, decimal.mark = “,”, prefix = "“, suffix =” €")) sales_by_year_tbl %&gt;%</p>
-<p># Canvas ggplot(aes(x = year, y = sales, color = sales)) +</p>
-<p># Geometries geom_line(size = 1) + geom_point(size = 5) + geom_smooth(method = “lm”, se = FALSE) revenue_by_month_tbl &lt;- bike_orderlines_wrangled_tbl %&gt;%</p>
-<pre><code>select(order.date, total.price) %&gt;%
-
-mutate(year_month = floor_date(order.date, &quot;months&quot;) %&gt;% ymd()) %&gt;%
-
-group_by(year_month) %&gt;%
-summarize(revenue = sum(total.price)) %&gt;%
-ungroup()</code></pre>
-<p>revenue_by_month_tbl %&gt;%</p>
-<pre><code>ggplot(aes(year_month, revenue)) +
-
-geom_line(size = 0.5, linetype = 1)+ 
-geom_smooth(method = &quot;loess&quot;, span = 0.2)</code></pre>
-<p>revenue_by_category_tbl &lt;- bike_orderlines_wrangled_tbl %&gt;%</p>
-<pre><code>select(category, total.price) %&gt;%
-
-group_by(category) %&gt;%
-summarize(revenue = sum(total.price)) %&gt;%
-ungroup()</code></pre>
-</div>
-<div id="bar-plot" class="section level1" number="5">
-<h1 number="5"><span class="header-section-number">5</span> Bar Plot</h1>
-<p>library(tidyverse) library(readxl)</p>
-<p>library(lubridate) n &lt;- 10 # Data Manipulation top_customers_tbl &lt;- bike_orderlines_wrangled_tbl %&gt;%</p>
-<pre><code># Select relevant columns
-select(name, total.price)%&gt;%
-
-# Collapse the least frequent values into “other”
-mutate(bikeshop = as_factor(name) %&gt;% fct_lump(n = n, w = total.price)) %&gt;%  # Group and summarize
-group_by(name) %&gt;%
-summarize(revenue = sum(total.price)) %&gt;%
-ungroup() %&gt;%
-
-# Reorder the column customer_city by revenue
-mutate(bikeshop = name %&gt;% fct_reorder(revenue))%&gt;%
-# Place &quot;Other&quot; at the beginning
-mutate(bikeshop = bikeshop %&gt;% fct_relevel(&quot;Other&quot;, after = 0))%&gt;%
-    arrange(desc(bikeshop)) %&gt;%
-
-# Add Revenue Text
-mutate(revenue_text = scales::dollar(revenue, 
-                                     scale  = 1e-6, 
-                                     prefix = &quot;&quot;, 
-                                     suffix = &quot;M €&quot;))</code></pre>
-<p>revenue_by_category_tbl %&gt;%</p>
-<pre><code>mutate(category_2 = category %&gt;% as_factor() %&gt;% fct_reorder(revenue)) %&gt;%
-
-ggplot(aes(category_2, revenue)) +
-
-geom_col(fill = &quot;#2c3e50&quot;) + 
-coord_flip()</code></pre>
 </div>
 
 
