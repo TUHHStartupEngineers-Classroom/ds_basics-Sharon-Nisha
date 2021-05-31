@@ -383,7 +383,7 @@ div.tocify {
 <p><strong>IMPORTANT:</strong> You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.</p>
 <div id="exercise-4-part-1" class="section level1" number="1">
 <h1 number="1"><span class="header-section-number">1</span> Exercise 4 part 1</h1>
-<p>Last compiled: 2021-05-30 Plotting covid data</p>
+<p>Last compiled: 2021-05-31 Plotting covid data</p>
 <pre class="r"><code>library(tidyverse)
 covid_data_tbl &lt;- read_csv(&quot;https://covid.ourworldindata.org/data/owid-covid-data.csv&quot;)
 new_cov_table&lt;-covid_data_tbl%&gt;%select(continent,date,total_cases)%&gt;%  group_by(continent,date) %&gt;% summarize(total.cases = sum(total_cases)) %&gt;%
@@ -407,6 +407,16 @@ new_cov_table %&gt;% group_by(continent,date)%&gt;%
 
     )</code></pre>
 <p><img src="04_data_visualization_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>The following problem required excess computational power to generate a solution</p>
+<p>world &lt;- map_data(“world”) covid_data_map&lt;- covid_data_tbl %&gt;% select(location,total_deaths, population) %&gt;%group_by(total_deaths,population,location) %&gt;% summarise(total_deaths = sum(total_deaths)) %&gt;% ungroup() %&gt;% group_by(location) %&gt;% mutate(pct = total_deaths / population) %&gt;%ungroup() %&gt;%mutate(location = case_when(</p>
+<pre><code>location == &quot;United Kingdom&quot; ~ &quot;UK&quot;,
+location == &quot;United States&quot; ~ &quot;USA&quot;,
+location == &quot;Democratic Republic of Congo&quot; ~ &quot;Democratic Republic of the Congo&quot;,
+TRUE ~ location</code></pre>
+<p>)) %&gt;%rename(region = location)%&gt;% distinct() covid_data_map2&lt;-covid_data_map%&gt;%select(region,total_deaths,population,pct)%&gt;%slice(1:1000)</p>
+<p>covid_data_map3 &lt;- left_join(covid_data_map2, world, by = “region”)</p>
+<p>covid_data_map4&lt;-covid_data_map3%&gt;%slice(1:1000) ggplot(covid_data_map4 , aes(map_id = region, fill =pct))+</p>
+<p>geom_map(map = covid_data_map4, color = “white”)+ expand_limits(x = covid_data_map4<span class="math inline">\(long, y = covid_data_map4\)</span>lat)+ scale_fill_viridis_c(option = “C”)</p>
 </div>
 
 

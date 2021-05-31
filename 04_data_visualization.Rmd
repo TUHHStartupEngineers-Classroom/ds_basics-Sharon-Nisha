@@ -56,5 +56,30 @@ new_cov_table %>% group_by(continent,date)%>%
 
 ```
 
+The following problem required excess computational power to generate a solution
+
+world <- map_data("world")
+covid_data_map<- covid_data_tbl %>%
+  select(location,total_deaths, population) %>%group_by(total_deaths,population,location) %>%
+    summarise(total_deaths = sum(total_deaths))  %>% ungroup()   %>% group_by(location) %>%
+    mutate(pct = total_deaths / population) %>%ungroup() %>%mutate(location = case_when(
+
+    location == "United Kingdom" ~ "UK",
+    location == "United States" ~ "USA",
+    location == "Democratic Republic of Congo" ~ "Democratic Republic of the Congo",
+    TRUE ~ location
+
+  )) %>%rename(region = location)%>%
+  distinct()
+covid_data_map2<-covid_data_map%>%select(region,total_deaths,population,pct)%>%slice(1:1000)
+
+covid_data_map3 <- left_join(covid_data_map2, world, by = "region")
+
+covid_data_map4<-covid_data_map3%>%slice(1:1000)
+ggplot(covid_data_map4 , aes(map_id = region, fill =pct))+
+  
+  geom_map(map = covid_data_map4,  color = "white")+
+  expand_limits(x = covid_data_map4$long, y = covid_data_map4$lat)+
+  scale_fill_viridis_c(option = "C")
 
 
