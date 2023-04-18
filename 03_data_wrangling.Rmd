@@ -16,39 +16,170 @@ output:
 knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 ```
 
-**IMPORTANT:** You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.
 
-This is an `.Rmd` file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a \# in front of your text, it will create a top level-header.
 
-# My first post
 
-Last compiled: `r Sys.Date()`
 
-Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left. 
+# US-American Corporations with maximum patents
 
-## Second level header
 
-You can add more headers by adding more hashtags. These won't be put into the table of contents
 
-### third level header
 
-Here's an even lower level header
 
-# My second post (note the order)
 
-Last compiled: `r Sys.Date()`
-
-I'm writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom
-
-# Adding R stuff
-
-So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the same place. 
-
-So, let's say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:
 
 ```{r}
-samples <- rnorm(100, mean=0, sd=1)
-hist(samples)
+  library(tidyverse)
+
+  # Data Table
+  library(data.table)
+  
+  # Counter
+  library(tictoc)
+library(vroom)
+col_types <- list(
+  id = col_character(),
+  type = col_character(),
+  number = col_character(),
+  country = col_character(),
+  date = col_date("%Y-%m-%d"),
+  abstract = col_character(),
+  title = col_character(),
+  kind = col_character(),
+  num_claims = col_double(),
+  filename = col_character(),
+  withdrawn = col_double()
+)
+
+patent_tbl <- vroom(
+            file       = "C:/Users/ctaru/Desktop/businessdatascience/Patent_data_reduced/patent.tsv", 
+            delim      = "\t", 
+            col_types  = col_types,
+            na         = c("", "NA", "NULL")
+        )
+
+assignee_tbl <- vroom(
+            file       = "C:/Users/ctaru/Desktop/businessdatascience/Patent_data_reduced/assignee.tsv", 
+            delim      = "\t", 
+            col_types  = col_types,
+            na         = c("", "NA", "NULL")
+        )
+patent_assignee <- vroom(
+            file       = "C:/Users/ctaru/Desktop/businessdatascience/Patent_data_reduced/patent_assignee.tsv", 
+            delim      = "\t", 
+            col_types  = col_types,
+            na         = c("", "NA", "NULL")
+        )
+##
+  class(patent_tbl)
+  
+  setDT(patent_tbl)
+  
+  class(assignee_tbl)
+
+  setDT(assignee_tbl)
+    class(patent_assignee )
+
+  setDT(patent_assignee )
+  ####importing required info
+  
+  tic()
+  patentandassignee_data <-patent_assignee   %>%
+        left_join(assignee_tbl, by = c("assignee_id" = "id")) 
+  
+  setDT(patentandassignee_data  )
+  toc()
+  
+  ##order the table according to company names .then we know how many repeats are there of the company
+patentandassignee_data[,.(organization,patent_id),by=organization]
+  filtered_tbl<-     patentandassignee_data[,numberofpatents:=.N,by=organization]#####these are no of entries per organisation .which is the number of patents
+   ###find the company with max no of patents
+
+newtab<-filtered_tbl %>%filter(!is.na(organization))%>%select(organization,numberofpatents)%>%group_by(organization) %>%
+  slice(n()) %>%
+  ungroup() %>%
+
+  arrange(desc(numberofpatents))%>%slice(1:10)
+newtab
 ```
 
-When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You'll learn that all of these things and more can be customized in each R code block.
+We can see from the table  that  the US company / corporation which has the most patents is the "International Business Machines Corporation" with 7547 patents.
+
+# Maximum patents in the year 2014
+```{r}
+#question 2 
+  library(tidyverse)
+
+  # Data Table
+  library(data.table)
+  
+  # Counter
+  library(tictoc)
+library(vroom)
+col_types <- list(
+  id = col_character(),
+  type = col_character(),
+  number = col_character(),
+  country = col_character(),
+  date = col_date("%Y-%m-%d"),
+  abstract = col_character(),
+  title = col_character(),
+  kind = col_character(),
+  num_claims = col_double(),
+  filename = col_character(),
+  withdrawn = col_double()
+)
+
+patent_tbl <- vroom(
+            file       = "C:/Users/ctaru/Desktop/businessdatascience/Patent_data_reduced/patent.tsv", 
+            delim      = "\t", 
+            col_types  = col_types,
+            na         = c("", "NA", "NULL")
+        )
+
+assignee_tbl <- vroom(
+            file       = "C:/Users/ctaru/Desktop/businessdatascience/Patent_data_reduced/assignee.tsv", 
+            delim      = "\t", 
+            col_types  = col_types,
+            na         = c("", "NA", "NULL")
+        )
+patent_assignee <- vroom(
+            file       = "C:/Users/ctaru/Desktop/businessdatascience/Patent_data_reduced/patent_assignee.tsv", 
+            delim      = "\t", 
+            col_types  = col_types,
+            na         = c("", "NA", "NULL")
+        )
+##
+  class(patent_tbl)
+  
+  setDT(patent_tbl)
+  
+  class(assignee_tbl)
+
+  setDT(assignee_tbl)
+    class(patent_assignee )
+
+  setDT(patent_assignee )
+  ####importing required info
+  
+  tic()
+  patentandassignee_data <-patent_assignee   %>%
+        left_join(assignee_tbl, by = c("assignee_id" = "id")) 
+    ques2_tbl<-patentandassignee_data %>%
+        left_join(patent_tbl, by = c("patent_id" = "id"))
+  
+  setDT(  ques2_tbl  )
+  toc()
+  ####oder by year and take rows with year 2014
+    tic()
+ques2_tbl%>% separate(col    =date ,
+           into   = c("year", "month","day"),
+           sep    = "-")%>%select(organization,year,patent_id)%>%filter(year==2014)%>%group_by(organization)%>%ungroup()%>% arrange(desc(organization))%>%count(organization)%>%arrange(desc(n))%>%filter(!is.na(organization))%>%slice(1:10)
+
+  ######
+    
+```
+
+
+
+We can see from the table once again that even in 2014 the US company / corporation which has the most patents is the "International Business Machines Corporation" with 7547 patents.

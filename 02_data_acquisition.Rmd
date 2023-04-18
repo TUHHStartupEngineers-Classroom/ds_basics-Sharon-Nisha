@@ -16,39 +16,66 @@ output:
 knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 ```
 
-**IMPORTANT:** You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.
 
-This is an `.Rmd` file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a \# in front of your text, it will create a top level-header.
 
-# My first post
+# Employee list 
 
-Last compiled: `r Sys.Date()`
 
-Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left. 
 
-## Second level header
+The following table shows employee details 
+```{r}
+library(jsonlite)
+library(tidyverse)
+library(xml2)
+library(httr)
+library(rvest)  
+library(httr)
+library(purrr)
 
-You can add more headers by adding more hashtags. These won't be put into the table of contents
 
-### third level header
+resp <- GET("https://dummy.restapiexample.com/api/v1/employees")
+library(jsonlite)
+resp %>% 
+    .$content %>% 
+    rawToChar() %>% 
+    fromJSON()
+resp
 
-Here's an even lower level header
 
-# My second post (note the order)
+```
+# Bike types and prices 
+The following table shows the bikenames and prices 
 
-Last compiled: `r Sys.Date()`
 
-I'm writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom
-
-# Adding R stuff
-
-So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the same place. 
-
-So, let's say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:
 
 ```{r}
-samples <- rnorm(100, mean=0, sd=1)
-hist(samples)
-```
+library(jsonlite)
+library(tidyverse)
+library(xml2)
+library(httr)
+library(rvest)  
+url  <- "https://www.radon-bikes.de/e-bike/mountainbike/bikegrid/"
+html <- url %>% 
+  read_html()
+rank <-  html %>% 
+  html_nodes(css = ".small-12 .a-heading--small")%>% 
+  html_text()
+  rank_non<-stringr::str_replace(rank, "\n", "")  %>%   #remove /n
+  discard(.p = ~stringr::str_detect(.x,"Welcome to our Radon-Bikes Instagram!|#radonbikes #bisbaldimwald"))
+  rank_non2<-stringr::str_extract(rank_non,"(?<= ).*(?=\n)")
 
-When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You'll learn that all of these things and more can be customized in each R code block.
+  ##price of each bike type 
+  bikeprice<-  html %>% 
+    html_nodes(css = ".small-12 .currency_eur .m-bikegrid__price--active") %>% 
+    html_text()
+  
+  rank_non3<-stringr::str_extract(bikeprice,"[0-9]+")%>%
+  as.numeric()
+  
+  #vector to table 
+  
+
+#fill the names to a table m-bikegrid__price--active
+  imdtbl <- tibble(Bike_names=rank_non2,Bike_price=rank_non3)
+  imdtbl
+```
